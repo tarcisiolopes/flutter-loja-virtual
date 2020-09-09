@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "603852827981",
+    "firebase_url": "https://lojaflutter-71793.firebaseio.com",
+    "project_id": "lojaflutter-71793",
+    "storage_bucket": "lojaflutter-71793.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603852827981:android:cf340f65e92311e4cf9b04",
+        "android_client_info": {
+          "package_name": "br.com.lopes.loja_virtual"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "603852827981-0c5chpda67fumqcdc8ocqd84lc1c3rj4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDatX46JhS93FXyE2ALgoK0ITW0tePQSB0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "603852827981-0c5chpda67fumqcdc8ocqd84lc1c3rj4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
