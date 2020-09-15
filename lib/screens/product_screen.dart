@@ -6,7 +6,6 @@ import 'package:loja_virtual/datas/product_data.dart';
 class ProductScreen extends StatefulWidget {
   final ProductData product;
 
-
   ProductScreen(this.product);
 
   @override
@@ -73,33 +72,60 @@ class _ProductScreenState extends State<ProductScreen> {
                     scrollDirection: Axis.horizontal,
                     padding: EdgeInsets.symmetric(vertical: 4.0),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1,
-                      mainAxisSpacing: 8.0,
-                      childAspectRatio: 0.5
+                        crossAxisCount: 1,
+                        mainAxisSpacing: 8.0,
+                        childAspectRatio: 0.5),
+                    children: product.tamanhos.map((t) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            tamanho = t;
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(4.0)),
+                            border: Border.all(
+                                color: t == tamanho
+                                    ? primaryColor
+                                    : Colors.grey[500],
+                                width: 3.0),
+                          ),
+                          width: 50.0,
+                          alignment: Alignment.center,
+                          child: Text(t),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                SizedBox(
+                  height: 44.0,
+                  child: RaisedButton(
+                    onPressed: tamanho != null ? () {} : null,
+                    child: Text(
+                      "Adicionar ao carrinho",
+                      style: TextStyle(fontSize: 18.0),
                     ),
-                    children: product.tamanhos.map(
-                        (t){
-                          return GestureDetector(
-                            onTap: (){
-                              setState(() {
-                                tamanho = t;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                                border: Border.all(
-                                  color: t == tamanho ? primaryColor : Colors.grey[500],
-                                  width: 3.0
-                                ),
-                              ),
-                              width: 50.0,
-                              alignment: Alignment.center,
-                              child: Text(t),
-                            ),
-                          );
-                        }
-                    ).toList(),
+                    color: primaryColor,
+                    textColor: Colors.white,
+                  ),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                Text(
+                  "Descrição",
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  product.descricao,
+                  style: TextStyle(
+                    fontSize: 16.0
                   ),
                 )
               ],
