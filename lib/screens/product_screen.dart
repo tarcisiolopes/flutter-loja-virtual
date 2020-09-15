@@ -6,6 +6,7 @@ import 'package:loja_virtual/datas/product_data.dart';
 class ProductScreen extends StatefulWidget {
   final ProductData product;
 
+
   ProductScreen(this.product);
 
   @override
@@ -14,6 +15,7 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   final ProductData product;
+  String tamanho;
 
   _ProductScreenState(this.product);
 
@@ -48,18 +50,56 @@ class _ProductScreenState extends State<ProductScreen> {
               children: [
                 Text(
                   product.titulo,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 20.0
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),
                   maxLines: 3,
                 ),
                 Text(
                   "R\$ ${product.preco.toStringAsFixed(2)}",
                   style: TextStyle(
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                Text(
+                  "Tamanho",
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: 34.0,
+                  child: GridView(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(vertical: 4.0),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 1,
+                      mainAxisSpacing: 8.0,
+                      childAspectRatio: 0.5
+                    ),
+                    children: product.tamanhos.map(
+                        (t){
+                          return GestureDetector(
+                            onTap: (){
+                              setState(() {
+                                tamanho = t;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                                border: Border.all(
+                                  color: t == tamanho ? primaryColor : Colors.grey[500],
+                                  width: 3.0
+                                ),
+                              ),
+                              width: 50.0,
+                              alignment: Alignment.center,
+                              child: Text(t),
+                            ),
+                          );
+                        }
+                    ).toList(),
                   ),
                 )
               ],
