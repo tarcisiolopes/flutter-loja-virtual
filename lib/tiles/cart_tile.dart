@@ -59,6 +59,7 @@ class CartTile extends StatelessWidget {
                       ),
                       Text(cartProduct.quantity.toString()),
                       IconButton(
+                        color: Theme.of(context).primaryColor,
                         icon: Icon(Icons.add),
                         onPressed: (){
                           CartModel.of(context).incProduct(cartProduct);
