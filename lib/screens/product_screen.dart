@@ -1,7 +1,11 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loja_virtual/datas/cart_product.dart';
 import 'package:loja_virtual/datas/product_data.dart';
+import 'package:loja_virtual/models/cart_model.dart';
+import 'package:loja_virtual/models/user_model.dart';
+import 'package:loja_virtual/screens/login_screen.dart';
 
 class ProductScreen extends StatefulWidget {
   final ProductData product;
@@ -106,9 +110,26 @@ class _ProductScreenState extends State<ProductScreen> {
                 SizedBox(
                   height: 44.0,
                   child: RaisedButton(
-                    onPressed: tamanho != null ? () {} : null,
+                    onPressed: tamanho != null
+                        ? () {
+                            if (UserModel.of(context).isLoggedIn()) {
+                              CartProduct cartProduct = CartProduct();
+                              cartProduct.size = tamanho;
+                              cartProduct.quantity = 1;
+                              cartProduct.pid = product.id;
+                              cartProduct.category = product.category;
+
+                              CartModel.of(context).addCardItem(cartProduct);
+                            } else {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => LoginScreen()));
+                            }
+                          }
+                        : null,
                     child: Text(
-                      "Adicionar ao carrinho",
+                      UserModel.of(context).isLoggedIn()
+                          ? "Adicionar ao carrinho"
+                          : "Entre para comprar",
                       style: TextStyle(fontSize: 18.0),
                     ),
                     color: primaryColor,
@@ -124,9 +145,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
                 Text(
                   product.descricao,
-                  style: TextStyle(
-                    fontSize: 16.0
-                  ),
+                  style: TextStyle(fontSize: 16.0),
                 )
               ],
             ),
