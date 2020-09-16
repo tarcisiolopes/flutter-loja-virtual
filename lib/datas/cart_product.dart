@@ -27,6 +27,6 @@ class CartProduct {
       "quantity": quantity,
       "size": size,
       "product": productData.toResumedMap()
-    }
+    };
   }
 }

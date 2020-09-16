@@ -24,7 +24,7 @@ class ProductData {
       "titulo": titulo,
       "descricao": descricao,
       "preco": preco
-    }
+    };
   }
 
 }
