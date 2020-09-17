@@ -14,9 +14,8 @@ class CartModel extends Model {
 
   bool isLoading = false;
 
-  CartModel(this.user){
-    if(user.isLoggedIn())
-    _loadCartItems();
+  CartModel(this.user) {
+    if (user.isLoggedIn()) _loadCartItems();
   }
 
   static CartModel of(BuildContext context) =>
@@ -48,56 +47,115 @@ class CartModel extends Model {
     notifyListeners();
   }
 
-  void decProduct(CartProduct cartProduct){
+  void decProduct(CartProduct cartProduct) {
     cartProduct.quantity--;
 
-    Firestore.instance.collection("users").document(user.firebaseUser.uid).collection("cart")
-    .document(cartProduct.cid).updateData(cartProduct.toMap());
+    Firestore.instance
+        .collection("users")
+        .document(user.firebaseUser.uid)
+        .collection("cart")
+        .document(cartProduct.cid)
+        .updateData(cartProduct.toMap());
 
     notifyListeners();
   }
 
-  void incProduct(CartProduct cartProduct){
+  void incProduct(CartProduct cartProduct) {
     cartProduct.quantity++;
 
-    Firestore.instance.collection("users").document(user.firebaseUser.uid).collection("cart")
-        .document(cartProduct.cid).updateData(cartProduct.toMap());
+    Firestore.instance
+        .collection("users")
+        .document(user.firebaseUser.uid)
+        .collection("cart")
+        .document(cartProduct.cid)
+        .updateData(cartProduct.toMap());
 
     notifyListeners();
   }
 
-  void _loadCartItems() async{
-    QuerySnapshot query = await Firestore.instance.collection("users").document(user.firebaseUser.uid).collection("cart")
+  void _loadCartItems() async {
+    QuerySnapshot query = await Firestore.instance
+        .collection("users")
+        .document(user.firebaseUser.uid)
+        .collection("cart")
         .getDocuments();
 
-    products = query.documents.map((doc) => CartProduct.fromDocument(doc)).toList();
+    products =
+        query.documents.map((doc) => CartProduct.fromDocument(doc)).toList();
 
     notifyListeners();
   }
 
-  void setCoupon(String couponCode, int discountPercentage){
+  void setCoupon(String couponCode, int discountPercentage) {
     this.couponCode = couponCode;
     this.discountPercentage = discountPercentage;
   }
 
-  double getProductsPrice(){
+  double getProductsPrice() {
     double price = 0.0;
-    for(CartProduct c in products){
-      if(c.productData != null)
-        price += c.quantity * c.productData.preco;
+    for (CartProduct c in products) {
+      if (c.productData != null) price += c.quantity * c.productData.preco;
     }
     return price;
   }
 
-  double getDiscount(){
+  double getDiscount() {
     return getProductsPrice() * discountPercentage / 100;
   }
 
-  double getShipPrice(){
+  double getShipPrice() {
     return 9.99;
   }
 
-  void updatePrices(){
+  void updatePrices() {
     notifyListeners();
+  }
+
+  Future<String> finishOrder() async {
+    if (products.length == 0) return null;
+
+    isLoading = true;
+    notifyListeners();
+
+    double productsPrice = getProductsPrice();
+    double shipPrice = getShipPrice();
+    double discount = getDiscount();
+
+    DocumentReference refOrder =
+        await Firestore.instance.collection("orders").add({
+      "clientId": user.firebaseUser.uid,
+      "products": products.map((cartProduct) => cartProduct.toMap()).toList(),
+      "shipPrice": shipPrice,
+      "productPrice": productsPrice,
+      "discount": discount,
+      "totalPrice": productsPrice - discount + shipPrice,
+      "status": 1
+    });
+
+    await Firestore.instance
+        .collection("users")
+        .document(user.firebaseUser.uid)
+        .collection("orders")
+        .document(refOrder.documentID)
+        .setData({"orderId": refOrder.documentID});
+
+    QuerySnapshot query = await Firestore.instance
+        .collection("users")
+        .document(user.firebaseUser.uid)
+        .collection("cart")
+        .getDocuments();
+
+    for(DocumentSnapshot doc in query.documents){
+      doc.reference.delete();
+    }
+
+    products.clear();
+    couponCode = null;
+    discountPercentage = 0;
+    isLoading = false;
+    notifyListeners();
+
+    return refOrder.documentID;
+
   }
 }
